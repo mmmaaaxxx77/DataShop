@@ -16,7 +16,7 @@ services:
     networks:
       - datashop-net
 
-  shop:
+  web:
     restart: always
     build: ./shop
     hostname: datashop
