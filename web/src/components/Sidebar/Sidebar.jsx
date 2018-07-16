@@ -20,7 +20,9 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 
 import sidebarStyle from "assets/jss/material-dashboard-pro-react/components/sidebarStyle.jsx";
 
-import avatar from "assets/img/faces/avatar.jpg";
+import avatar from "assets/img/default-avatar.png";
+
+import { getUser, setPersistStore, logOut } from "../../util/Auth";
 
 var ps;
 
@@ -63,8 +65,10 @@ class Sidebar extends React.Component {
       openForms: this.activeRoute("/forms"),
       openTables: this.activeRoute("/tables"),
       openMaps: this.activeRoute("/maps"),
-      openPages: this.activeRoute("-page"),
-      miniActive: true
+      openPages: this.activeRoute("/page"),
+      miniActive: true,
+
+      user: {username:''}
     };
     this.activeRoute.bind(this);
   }
@@ -77,6 +81,22 @@ class Sidebar extends React.Component {
     st[collapse] = !this.state[collapse];
     this.setState(st);
   }
+
+  componentDidMount() {
+    const self = this;
+    setPersistStore(
+      function(){
+        try{
+          getUser().then(function(d){
+            self.setState({'user': d.data});
+            console.log(d.data);
+          });
+        }catch(error){
+          window.location.href = "/pages/login-page";
+        }
+      });
+  }
+
   render() {
     const {
       classes,
@@ -144,7 +164,7 @@ class Sidebar extends React.Component {
               onClick={() => this.openCollapse("openAvatar")}
             >
               <ListItemText
-                primary={rtlActive ? "تانيا أندرو" : "測試人員"}
+                primary={rtlActive ? "تانيا أندرو" : this.state.user.username}
                 secondary={
                   <b
                     className={
@@ -162,7 +182,7 @@ class Sidebar extends React.Component {
             </NavLink>
             <Collapse in={this.state.openAvatar} unmountOnExit>
               <List className={classes.list + " " + classes.collapseList}>
-                <ListItem className={classes.collapseItem}>
+              {/*  <ListItem className={classes.collapseItem}>
                   <NavLink
                     to="#"
                     className={
@@ -197,7 +217,7 @@ class Sidebar extends React.Component {
                       className={collapseItemText}
                     />
                   </NavLink>
-                </ListItem>
+                </ListItem> */}
                 <ListItem className={classes.collapseItem}>
                   <NavLink
                     to="#"
@@ -206,12 +226,13 @@ class Sidebar extends React.Component {
                     }
                   >
                     <span className={collapseItemMini}>
-                      {rtlActive ? "و" : "S"}
+                      {rtlActive ? "و" : "L"}
                     </span>
                     <ListItemText
-                      primary={rtlActive ? "إعدادات" : "Settings"}
+                      primary={rtlActive ? "إعدادات" : "登出"}
                       disableTypography={true}
                       className={collapseItemText}
+                      onClick={logOut}
                     />
                   </NavLink>
                 </ListItem>
@@ -393,10 +414,10 @@ class Sidebar extends React.Component {
       });
     var brand = (
       <div className={logoClasses}>
-        <a href="https://www.creative-tim.com" className={logoMini}>
+        <a href="http://data.johnnyplanet.com" className={logoMini}>
           <img src={logo} alt="logo" className={classes.img} />
         </a>
-        <a href="https://www.creative-tim.com" className={logoNormal}>
+        <a href="http://data.johnnyplanet.com" className={logoNormal}>
           {logoText}
         </a>
       </div>

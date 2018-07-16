@@ -9,6 +9,8 @@ import ListItem from "@material-ui/core/ListItem";
 
 import footerStyle from "assets/jss/material-dashboard-pro-react/components/footerStyle";
 
+import { getUser, setPersistStore, logOut } from "../../util/Auth";
+
 function Footer({ ...props }) {
   const { classes, fluid, white, rtlActive } = props;
   var container = cx({
@@ -31,35 +33,17 @@ function Footer({ ...props }) {
         <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
-              <a href="#home" className={block}>
-                {rtlActive ? "الصفحة الرئيسية" : "Home"}
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#company" className={block}>
-                {rtlActive ? "شركة" : "Company"}
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#portfolio" className={block}>
-                {rtlActive ? "بعدسة" : "Portfolio"}
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#blog" className={block}>
-                {rtlActive ? "مدونة" : "Blog"}
+              <a href="/" className={block}>
+                Home
               </a>
             </ListItem>
           </List>
         </div>
         <p className={classes.right}>
-          &copy; {1900 + new Date().getYear()}{" "}
-          <a href="https://www.creative-tim.com" className={anchor}>
-            {rtlActive ? "توقيت الإبداعية" : "Creative Tim"}
-          </a>
-          {rtlActive
-            ? ", مصنوعة مع الحب لشبكة الإنترنت أفضل"
-            : ", made with love for a better web"}
+          &copy; 2017-{1900 + new Date().getYear()}{" "}
+          <a href="https://medium.com/johnnyplanet" className={anchor}>
+            強尼星球
+          </a> 資料中心
         </p>
       </div>
     </footer>

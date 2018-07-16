@@ -23,7 +23,9 @@ function CustomInput({ ...props }) {
     error,
     white,
     inputRootCustomClasses,
-    success
+    success,
+    onChange,
+    onKeyPress
   } = props;
 
   const labelClasses = classNames({
@@ -70,6 +72,8 @@ function CustomInput({ ...props }) {
         </InputLabel>
       ) : null}
       <Input
+        onChange={onChange}
+        onKeyPress={onKeyPress}
         classes={{
           input: inputClasses,
           root: marginTop,

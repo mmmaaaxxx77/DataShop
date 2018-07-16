@@ -1,0 +1,35 @@
+version: "2"
+
+services:
+  shop:
+    restart: always
+    build: ./shop
+    hostname: datashop
+    environment:
+      - TZ=Asia/Taipei
+    volumes:
+      - /etc/localtime:/etc/localtime
+    ports:
+      - "5666:8000"
+    container_name: datashop
+    command: python manage.py runserver
+    networks:
+      - datashop-net
+
+  shop:
+    restart: always
+    build: ./shop
+    hostname: datashop
+    environment:
+      - TZ=Asia/Taipei
+    volumes:
+      - /etc/localtime:/etc/localtime
+    ports:
+      - "5667:3000"
+    container_name: datashop
+    command: npm run start
+    networks:
+      - datashop-net
+
+networks:
+  datashop-net:

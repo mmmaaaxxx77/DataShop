@@ -24,6 +24,8 @@ import Button from "components/CustomButtons/Button.jsx";
 
 import headerLinksStyle from "assets/jss/material-dashboard-pro-react/components/headerLinksStyle";
 
+import { getUser, setPersistStore, logOut } from "../../util/Auth";
+
 class HeaderLinks extends React.Component {
   state = {
     open: false
@@ -59,7 +61,7 @@ class HeaderLinks extends React.Component {
     });
     return (
       <div className={wrapper}>
-        <CustomInput
+        {/*<CustomInput
           rtlActive={rtlActive}
           formControlProps={{
             className: classes.top + " " + classes.search
@@ -107,13 +109,13 @@ class HeaderLinks extends React.Component {
               {rtlActive ? "لوحة القيادة" : "Dashboard"}
             </span>
           </Hidden>
-        </Button>
+        </Button>*/}
         <Manager className={managerClasses}>
           <Target>
             <Button
               color="transparent"
               justIcon
-              aria-label="Notifications"
+              aria-label="Person"
               aria-owns={open ? "menu-list" : null}
               aria-haspopup="true"
               onClick={this.handleClick}
@@ -122,7 +124,7 @@ class HeaderLinks extends React.Component {
                 label: rtlActive ? classes.labelRTL : ""
               }}
             >
-              <Notifications
+              <Person
                 className={
                   classes.headerLinksSvg +
                   " " +
@@ -131,10 +133,9 @@ class HeaderLinks extends React.Component {
                     : classes.links)
                 }
               />
-              <span className={classes.notifications}>5</span>
               <Hidden mdUp>
                 <span onClick={this.handleClick} className={classes.linkText}>
-                  {rtlActive ? "إعلام" : "Notification"}
+                  {"Person"}
                 </span>
               </Hidden>
             </Button>
@@ -156,72 +157,20 @@ class HeaderLinks extends React.Component {
               >
                 <Paper className={classes.dropdown}>
                   <MenuList role="menu">
-                    <MenuItem
-                      onClick={this.handleClose}
-                      className={dropdownItem}
-                    >
-                      {rtlActive
-                        ? "إجلاء أوزار الأسيوي حين بل, كما"
-                        : "Mike John responded to your email"}
+                    <a href="#" onClick={logOut}>
+                      <MenuItem
+                        onClick={this.handleClose}
+                        className={dropdownItem}
+                      >
+                        {"登出"}
                     </MenuItem>
-                    <MenuItem
-                      onClick={this.handleClose}
-                      className={dropdownItem}
-                    >
-                      {rtlActive
-                        ? "شعار إعلان الأرضية قد ذلك"
-                        : "You have 5 new tasks"}
-                    </MenuItem>
-                    <MenuItem
-                      onClick={this.handleClose}
-                      className={dropdownItem}
-                    >
-                      {rtlActive
-                        ? "ثمّة الخاصّة و على. مع جيما"
-                        : "You're now friend with Andrew"}
-                    </MenuItem>
-                    <MenuItem
-                      onClick={this.handleClose}
-                      className={dropdownItem}
-                    >
-                      {rtlActive ? "قد علاقة" : "Another Notification"}
-                    </MenuItem>
-                    <MenuItem
-                      onClick={this.handleClose}
-                      className={dropdownItem}
-                    >
-                      {rtlActive ? "قد فاتّبع" : "Another One"}
-                    </MenuItem>
+                    </a>
                   </MenuList>
                 </Paper>
               </Grow>
             </ClickAwayListener>
           </Popper>
         </Manager>
-        <Button
-          color="transparent"
-          aria-label="Person"
-          justIcon
-          className={rtlActive ? classes.buttonLinkRTL : classes.buttonLink}
-          muiClasses={{
-            label: rtlActive ? classes.labelRTL : ""
-          }}
-        >
-          <Person
-            className={
-              classes.headerLinksSvg +
-              " " +
-              (rtlActive
-                ? classes.links + " " + classes.linksRTL
-                : classes.links)
-            }
-          />
-          <Hidden mdUp>
-            <span className={classes.linkText}>
-              {rtlActive ? "الملف الشخصي" : "Profile"}
-            </span>
-          </Hidden>
-        </Button>
       </div>
     );
   }

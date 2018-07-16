@@ -64,9 +64,20 @@ var dashRoutes = [
     icon: DashboardIcon,
     component: Dashboard
   },
+  { redirect: true, path: "/", pathTo: "/dashboard", name: "Dashboard" }
+];
+
+/*
+var dashRoutes = [
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    icon: DashboardIcon,
+    component: Dashboard
+  },
   {
     collapse: true,
-    path: "-page",
+    path: "/page",
     name: "Pages",
     state: "openPages",
     icon: Image,
@@ -205,4 +216,5 @@ var dashRoutes = [
   { path: "/calendar", name: "Calendar", icon: DateRange, component: Calendar },
   { redirect: true, path: "/", pathTo: "/dashboard", name: "Dashboard" }
 ];
+*/
 export default dashRoutes;

@@ -21,6 +21,8 @@ import appStyle from "assets/jss/material-dashboard-pro-react/layouts/dashboardS
 import image from "assets/img/sidebar-1.jpg";
 import logo from "assets/img/logo-white.svg";
 
+import {login, loggedIn, logOut} from "../util/Auth";
+
 const switchRoutes = (
   <Switch>
     {dashboardRoutes.map((prop, key) => {
@@ -58,13 +60,24 @@ class Dashboard extends React.Component {
       });
       document.body.style.overflow = "hidden";
     }
+
+    // auth
+    //console.log("login :" + loggedIn());
+    //login('admin','1qaz@WSX');
+    // try{
+    //   login('admin','1qaz@WSX');
+    // }catch(err) {
+    //    window.location.href = "/pages/login-page";
+    // }
+    //logOut();
+
   }
   componentWillUnmount() {
     if (navigator.platform.indexOf("Win") > -1) {
       ps.destroy();
     }
   }
-  componentDidUpdate(e) {
+  componentDidUpdate(e) {    
     if (e.history.location.pathname !== e.location.pathname) {
       this.refs.mainPanel.scrollTop = 0;
       if(this.state.mobileOpen){

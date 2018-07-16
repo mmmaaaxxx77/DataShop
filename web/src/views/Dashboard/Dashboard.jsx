@@ -160,7 +160,7 @@ class Dashboard extends React.Component {
             </Card>
           </GridItem>
         </GridContainer>
-        <GridContainer>
+        {/*<GridContainer>
           <GridItem xs={12}>
             <Card>
               <CardHeader color="success" icon>
@@ -580,7 +580,7 @@ class Dashboard extends React.Component {
               </CardFooter>
             </Card>
           </GridItem>
-        </GridContainer>
+        </GridContainer>*/}
       </div>
     );
   }
