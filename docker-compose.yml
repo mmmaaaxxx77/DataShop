@@ -27,8 +27,8 @@ services:
     ports:
       - "5667:3000"
     container_name: datashop-web
-    #command: npm run start
-    tty: true
+    command: npm run start
+    #tty: true
     networks:
       - datashop-net
 
