@@ -18,15 +18,15 @@ services:
 
   web:
     restart: always
-    build: ./shop
-    hostname: datashop
+    build: ./web
+    hostname: web
     environment:
       - TZ=Asia/Taipei
     volumes:
       - /etc/localtime:/etc/localtime
     ports:
       - "5667:3000"
-    container_name: datashop
+    container_name: web
     command: npm run start
     networks:
       - datashop-net
