@@ -4,4 +4,4 @@ RUN mkdir /app
 WORKDIR /app
 ADD . /app
 RUN pip install -r pip.txt
-RUN python manage.py runserver
+#RUN python manage.py runserver
