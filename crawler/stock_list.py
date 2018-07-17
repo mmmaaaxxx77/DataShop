@@ -186,6 +186,8 @@ def auto_maintain():
     # _do_work(url, "興櫃")
     # sleep(10)
 
+    sleep(60 * 60 * 24 * 3)
+
 
 if __name__ == '__main__':
 

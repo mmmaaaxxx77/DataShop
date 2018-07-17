@@ -56,8 +56,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
     container_name: datashop-crawler
-    tty: true
-    #command: python -c "from stock_list import auto_maintain; auto_maintain();"
+    #tty: true
+    command: python -c "from stock_list import auto_maintain; auto_maintain();"
     networks:
       - datashop-net
 
