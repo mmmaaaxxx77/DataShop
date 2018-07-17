@@ -53,8 +53,6 @@ services:
       - TZ=Asia/Taipei
     volumes:
       - /etc/localtime:/etc/localtime
-    ports:
-      - "5666:8000"
     container_name: datashop-crawler
     tty: true
     #command: python -c "from stock_list import auto_maintain; auto_maintain();"
