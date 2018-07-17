@@ -2,6 +2,7 @@
 colorlog==3.0.1
 beautifulsoup4==4.6.0
 xlsxwriter==1.0.5
+requests==2.13.0
 
 # For Mongo
 # pymongo==3.4.0
