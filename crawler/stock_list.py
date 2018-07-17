@@ -119,6 +119,7 @@ def auto_maintain():
                 'stock_id': stock_id,
                 'stock_name': stock_name,
                 'stock_update_date': update_date,
+                'stock_type': type,
                 'create_date': datetime.datetime.now(),
                 'shareholder_position': d[0],
                 'shareholder_name': d[1],
@@ -129,6 +130,7 @@ def auto_maintain():
             # write to mongo
             _model = ShareHolder(stock_id=stock_id,
                                  stock_name=stock_name,
+                                 stock_type=type,
                                  position=d[0],
                                  name=d[1],
                                  stock_count=d[2],
@@ -146,7 +148,7 @@ def auto_maintain():
         print("清除所有Stock資料")
         for d in stock_list:
             print(f"{d[2]} {d[3]}")
-            _data = Stock(stock_id=d[2], stock_name=d[3])
+            _data = Stock(stock_id=d[2], stock_name=d[3], stock_type=type)
             _data.save()
 
         # format all data
@@ -187,6 +189,8 @@ def auto_maintain():
     #        "issuetype=R&industry_code=&Page=1&chklike=Y")
     # _do_work(url, "興櫃")
     # sleep(10)
+
+
 
     sleep(60 * 60 * 24 * 3)
 

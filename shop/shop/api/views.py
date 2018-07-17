@@ -13,6 +13,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
+from shop.api.mongo.model import Stock, ShareHolder
+
 
 class ExpiringTokenAuthentication(TokenAuthentication):
     def authenticate_credentials(self, key):
@@ -78,3 +80,69 @@ class Logout(APIView):
     def get(self, request, format=None):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class StockDetail(APIView):
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        request = {}
+        tps = ['上市', '上櫃', '興櫃']
+        for idx in range(0, len(tps)):
+            _type = tps[idx]
+            count = ShareHolder.objects(type=_type).count()
+            request[idx] = {
+                'type': _type,
+                'count': count
+            }
+
+        return Response(request)
+
+
+class AllStock(APIView):
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        all = Stock.objects().all()
+        request = []
+        for stock in all:
+            request.append({
+                'stock_id': stock.stock_id,
+                'stock_name': stock.stock_name,
+                'create_date': stock.create_date
+            })
+
+        return Response({
+            'data': request
+        })
+
+
+class StockShareHolder(APIView):
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, stock_id=None, format=None):
+
+        if stock_id:
+            all = ShareHolder.objects(stock_id=stock_id).all()
+        else:
+            all = ShareHolder.objects().all()
+
+        request = []
+        for stock in all:
+            request.append({
+                'stock_id': stock.stock_id,
+                'stock_name': stock.stock_name,
+                'position': stock.position,
+                'name': stock.name,
+                'stock_count': stock.stock_count,
+                'stock_percentage': stock.stock_percentage,
+                'stock_update_date': stock.stock_update_date,
+                'create_date': stock.create_date,
+            })
+
+        return Response({
+            'data': request
+        })
