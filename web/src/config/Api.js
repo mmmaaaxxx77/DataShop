@@ -1,3 +1,4 @@
+//export const URL = 'http://localhost:8000/api';
 export const URL = 'http://dataapi.johnnyplanet.com/api';
 export const LOGIN = "/auth";
 export const LOGOUT = "/logout";
