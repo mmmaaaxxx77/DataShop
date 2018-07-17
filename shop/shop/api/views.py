@@ -1,5 +1,6 @@
 import datetime
 
+import math
 import pytz
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -91,7 +92,7 @@ class StockDetail(APIView):
         tps = ['上市', '上櫃', '興櫃']
         for idx in range(0, len(tps)):
             _type = tps[idx]
-            count = ShareHolder.objects(type=_type).count()
+            count = Stock.objects(stock_type=_type).count()
             request[idx] = {
                 'type': _type,
                 'count': count
@@ -123,12 +124,41 @@ class StockShareHolder(APIView):
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, stock_id=None, format=None):
+    def get(self, request, format=None):
 
-        if stock_id:
-            all = ShareHolder.objects(stock_id=stock_id).all()
-        else:
-            all = ShareHolder.objects().all()
+        page_size = int(self.request.query_params.get('pageSize', 10))
+        page = int(self.request.query_params.get('page', 0))
+        stock_id = str(self.request.query_params.get('stock_id', None))
+        stock_name = str(self.request.query_params.get('stock_name', None))
+        position = str(self.request.query_params.get('position', None))
+        name = str(self.request.query_params.get('name', None))
+        stock_count = int(self.request.query_params.get('stock_count', 0))
+
+        stock_count_sort = str(self.request.query_params.get('stock_count_sort', None))
+
+        _filter = {}
+
+        if stock_id != 'None':
+            _filter['stock_id'] = stock_id
+        if stock_name != 'None':
+            _filter['stock_name__contains'] = stock_name
+        if position != 'None':
+            _filter['position__contains'] = position
+        if stock_count != 0:
+            _filter['stock_count'] = stock_count
+        if name != 'None':
+            _filter['name__contains'] = name
+
+        all = ShareHolder.objects(**_filter)
+
+        if stock_count_sort == 'desc':
+            all = all.order_by('-stock_count')
+        elif stock_count_sort == 'asc':
+            all = all.order_by('stock_count')
+
+        count = all.count()
+
+        all = all.skip(page * page_size).limit(page_size).all()
 
         request = []
         for stock in all:
@@ -144,5 +174,6 @@ class StockShareHolder(APIView):
             })
 
         return Response({
-            'data': request
+            'data': request,
+            'count': math.ceil(count / page_size)
         })

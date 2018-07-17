@@ -23,6 +23,9 @@ import { dataTable } from "variables/general.jsx";
 
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 
+import { getStockList } from "../../util/Stock";
+import { setPersistStore } from "../../util/Auth";
+
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -35,6 +38,9 @@ class ReactTables extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      data: []
+    }
+    {/*this.state = {
       data: dataTable.dataRows.map((prop, key) => {
         return {
           id: key,
@@ -45,7 +51,6 @@ class ReactTables extends React.Component {
           actions: (
             // we've added some custom button actions
             <div className="actions-right">
-              {/* use this button to add a like kind of action */}
               <Button
                 justIcon
                 round
@@ -69,7 +74,6 @@ class ReactTables extends React.Component {
               >
                 <Favorite />
               </Button>{" "}
-              {/* use this button to add a edit kind of action */}
               <Button
                 justIcon
                 round
@@ -93,7 +97,6 @@ class ReactTables extends React.Component {
               >
                 <Dvr />
               </Button>{" "}
-              {/* use this button to remove the data row */}
               <Button
                 justIcon
                 round
@@ -120,8 +123,26 @@ class ReactTables extends React.Component {
           )
         };
       })
-    };
+    };*/}
   }
+
+  componentDidMount() {
+    const self = this;
+    setPersistStore(
+      function(){
+        getStockList().then(function(d){
+          console.log(d);
+          self.setState({data:d.data.data.map((prop, key) => {
+            return {
+              id: key,
+              stock_id: prop['stock_id'],
+              stock_name: prop['stock_name']
+            }
+          })});
+      });
+    });
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -140,27 +161,13 @@ class ReactTables extends React.Component {
                 filterable
                 columns={[
                   {
+                    Header: "股票代號",
+                    accessor: "stock_id"
+                  },
+                  {
                     Header: "公司名稱",
-                    accessor: "name"
-                  },
-                  {
-                    Header: "職稱",
-                    accessor: "position"
-                  },
-                  {
-                    Header: "姓名/法人名稱",
-                    accessor: "office"
-                  },
-                  {
-                    Header: "持股張數",
-                    accessor: "age"
-                  },
-                  {
-                    Header: "持股比例",
-                    accessor: "actions",
-                    sortable: false,
-                    filterable: false
-                  }
+                    accessor: "stock_name"
+                  }                
                 ]}
                 defaultPageSize={10}
                 showPaginationTop

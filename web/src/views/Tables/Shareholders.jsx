@@ -23,6 +23,13 @@ import { dataTable } from "variables/general.jsx";
 
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 
+import { getStockShareHolder } from "../../util/Stock";
+import { setPersistStore } from "../../util/Auth";
+
+import store from '../../store';
+import axios from 'axios';
+import { URL, STOCK_LIST, STOCK_SHAREHOLDER, STOCK_DETAIL } from '../../config/Api';
+
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -35,94 +42,39 @@ class ReactTables extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: dataTable.dataRows.map((prop, key) => {
-        return {
-          id: key,
-          name: prop[0],
-          position: prop[1],
-          office: prop[2],
-          age: prop[3],
-          actions: (
-            // we've added some custom button actions
-            <div className="actions-right">
-              {/* use this button to add a like kind of action */}
-              <Button
-                justIcon
-                round
-                simple
-                onClick={() => {
-                  let obj = this.state.data.find(o => o.id === key);
-                  alert(
-                    "You've clicked LIKE button on \n{ \nName: " +
-                      obj.name +
-                      ", \nposition: " +
-                      obj.position +
-                      ", \noffice: " +
-                      obj.office +
-                      ", \nage: " +
-                      obj.age +
-                      "\n}."
-                  );
-                }}
-                color="info"
-                className="like"
-              >
-                <Favorite />
-              </Button>{" "}
-              {/* use this button to add a edit kind of action */}
-              <Button
-                justIcon
-                round
-                simple
-                onClick={() => {
-                  let obj = this.state.data.find(o => o.id === key);
-                  alert(
-                    "You've clicked EDIT button on \n{ \nName: " +
-                      obj.name +
-                      ", \nposition: " +
-                      obj.position +
-                      ", \noffice: " +
-                      obj.office +
-                      ", \nage: " +
-                      obj.age +
-                      "\n}."
-                  );
-                }}
-                color="warning"
-                className="edit"
-              >
-                <Dvr />
-              </Button>{" "}
-              {/* use this button to remove the data row */}
-              <Button
-                justIcon
-                round
-                simple
-                onClick={() => {
-                  var data = this.state.data;
-                  data.find((o, i) => {
-                    if (o.id === key) {
-                      // here you should add some custom code so you can delete the data
-                      // from this component and from your server as well
-                      data.splice(i, 1);
-                      return true;
-                    }
-                    return false;
-                  });
-                  this.setState({ data: data });
-                }}
-                color="danger"
-                className="remove"
-              >
-                <Close />
-              </Button>{" "}
-            </div>
-          )
-        };
-      })
+      data: [],
+      loading: true,
+      pages: 1,
+      stock_id: null
     };
   }
+
+  /*
+  componentDidMount() {
+    const self = this;
+    setPersistStore(
+      function(){
+        getStockShareHolder().then(function(d){
+          console.log(d);
+          self.setState({data:d.data.data.map((prop, key) => {
+            return {
+              id: key,
+              stock_id: prop['stock_id'],
+              stock_name: prop['stock_name'],
+              position: prop['position'],
+              name: prop['name'],
+              stock_count: prop['stock_count'],
+              stock_percentage: prop['stock_percentage'],
+              stock_update_date: prop['stock_update_date']              
+            }
+          })});
+      });
+    });
+  }
+  */
+
   render() {
+    const self = this;
     const { classes } = this.props;
     return (
       <GridContainer>
@@ -140,24 +92,32 @@ class ReactTables extends React.Component {
                 filterable
                 columns={[
                   {
-                    Header: "股票名稱",
-                    accessor: "name"
+                    Header: "股票代號",
+                    accessor: "stock_id",
+                    sortable: false
                   },
                   {
+                    Header: "股票名稱",
+                    accessor: "stock_name",
+                    sortable: false
+                  },                  
+                  {
                     Header: "職稱",
-                    accessor: "position"
+                    accessor: "position",
+                    sortable: false
                   },
                   {
                     Header: "姓名/法人名稱",
-                    accessor: "office"
+                    accessor: "name",
+                    sortable: false
                   },
                   {
                     Header: "持股張數",
-                    accessor: "age"
+                    accessor: "stock_count"
                   },
                   {
                     Header: "持股比例",
-                    accessor: "actions",
+                    accessor: "stock_percentage",
                     sortable: false,
                     filterable: false
                   }
@@ -173,6 +133,70 @@ class ReactTables extends React.Component {
                 pageText='頁數'
                 ofText='/'
                 rowsText='筆'
+
+                loading={self.state.loading}
+                pages={self.state.pages}
+                manual
+                onFetchData={(state, instance) => {
+
+                    let url = URL + STOCK_SHAREHOLDER;
+
+                    const page = state.page;
+                    const pageSize = state.pageSize;
+                    const sorted = state.sorted;
+                    const filtered = state.filtered;
+
+                    console.log(state);
+
+                    if(self.state.stock_id)
+                      url += "/" + self.state.stock_id + "/";
+
+                    url += "?pageSize=" + pageSize;
+                    url += "&page=" + page;
+
+                    console.log(filtered);
+                    for(let i=0;i<filtered.length;i++){
+                      let ff = filtered[i];
+                      url += "&" + ff['id'] + "=" + ff['value'];
+                    }
+
+                    for(let i=0;i<sorted.length;i++){
+                      let ff = sorted[i];
+
+                      let _sort = 'asc';
+                      if(ff['desc']){
+                        _sort = 'desc';
+                      }
+                      url += "&" + ff['id'] + "_sort=" + _sort;
+                    }
+
+                    // show the loading overlay
+                    self.setState({loading: true})
+                    // fetch your data
+                    setPersistStore(function(){
+                      const token = store.getState().token;
+                      axios.get(url,
+                      { headers: { Authorization: 'Token ' + token } })
+                      .then((res) => {
+                        // Update react-table
+                        self.setState({
+                          data: res.data.data.map((prop, key) => {
+                            return {
+                              id: key,
+                              stock_id: prop['stock_id'],
+                              stock_name: prop['stock_name'],
+                              position: prop['position'],
+                              name: prop['name'],
+                              stock_count: prop['stock_count'],
+                              stock_percentage: prop['stock_percentage']
+                            }
+                          }),
+                          pages: res.data.count,
+                          loading: false
+                        })
+                      })
+                    });
+                  }}
               />
             </CardBody>
           </Card>

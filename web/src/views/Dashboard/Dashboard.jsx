@@ -49,6 +49,9 @@ import priceImage1 from "assets/img/card-2.jpeg";
 import priceImage2 from "assets/img/card-3.jpeg";
 import priceImage3 from "assets/img/card-1.jpeg";
 
+import { getDetail } from "../../util/Stock";
+import { setPersistStore } from "../../util/Auth";
+
 const us_flag = require("assets/img/flags/US.png");
 const de_flag = require("assets/img/flags/DE.png");
 const au_flag = require("assets/img/flags/AU.png");
@@ -71,8 +74,12 @@ var mapData = {
 };
 
 class Dashboard extends React.Component {
+
   state = {
-    value: 0
+    value: 0,
+    'stock0':0,
+    'stock1':0,
+    'stock2':0,
   };
   handleChange = (event, value) => {
     this.setState({ value });
@@ -80,6 +87,23 @@ class Dashboard extends React.Component {
   handleChangeIndex = index => {
     this.setState({ value: index });
   };
+
+  componentDidMount() {
+    const self = this;
+    setPersistStore(
+      function(){
+        getDetail().then(function(d){
+          console.log(d);
+          self.setState({
+            'stock0': d.data[0].count,
+            'stock1': d.data[1].count,
+            'stock2': d.data[2].count,
+        });
+        });
+      });
+  }
+
+
   render() {
     const { classes } = this.props;
     return (
@@ -93,15 +117,17 @@ class Dashboard extends React.Component {
                 </CardIcon>
                 <p className={classes.cardCategory}>上市股票數量</p>
                 <h3 className={classes.cardTitle}>
-                  0 <small>檔</small>
+                  {this.state.stock0} <small>檔</small>
                 </h3>
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
                   <List />
-                  <a href="#" onClick={e => e.preventDefault()}>
+                {/*
+                  <a href="#">
                     顯示列表
                   </a>
+                */}
                 </div>
               </CardFooter>
             </Card>
@@ -114,15 +140,17 @@ class Dashboard extends React.Component {
                 </CardIcon>
                 <p className={classes.cardCategory}>上櫃股票數量</p>
                 <h3 className={classes.cardTitle}>
-                  0 <small>檔</small>
+                  {this.state.stock1} <small>檔</small>
                 </h3>
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
                   <List />
+                {/*
                   <a href="#">
                     顯示列表
                   </a>
+                */}
                 </div>
               </CardFooter>
             </Card>
@@ -135,15 +163,17 @@ class Dashboard extends React.Component {
                 </CardIcon>
                 <p className={classes.cardCategory}>興櫃股票數量</p>
                 <h3 className={classes.cardTitle}>
-                  0 <small>檔</small>
+                  {this.state.stock2} <small>檔</small>
                 </h3>
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
                   <List />
+                {/*
                   <a href="#">
                     顯示列表
                   </a>
+                */}
                 </div>
               </CardFooter>
             </Card>
