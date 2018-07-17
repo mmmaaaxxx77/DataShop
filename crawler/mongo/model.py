@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
 
-connect('datashop-mongo')
+connect('stock', host='datashop-mongo')
 
 
 class Stock(Document):
