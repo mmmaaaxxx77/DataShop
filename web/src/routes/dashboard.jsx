@@ -13,6 +13,8 @@ import Wizard from "views/Forms/Wizard.jsx";
 import RegularTables from "views/Tables/RegularTables.jsx";
 import ExtendedTables from "views/Tables/ExtendedTables.jsx";
 import ReactTables from "views/Tables/ReactTables.jsx";
+import StockList from "views/Tables/StockList.jsx";
+import Shareholders from "views/Tables/Shareholders.jsx";
 import GoogleMaps from "views/Maps/GoogleMaps.jsx";
 import FullScreenMap from "views/Maps/FullScreenMap.jsx";
 import VectorMap from "views/Maps/VectorMap.jsx";
@@ -32,6 +34,7 @@ import Apps from "@material-ui/icons/Apps";
 import ContentPaste from "@material-ui/icons/ContentPaste";
 import GridOn from "@material-ui/icons/GridOn";
 import Place from "@material-ui/icons/Place";
+import Assessment from "@material-ui/icons/Assessment";
 import WidgetsIcon from "@material-ui/icons/Widgets";
 import Timeline from "@material-ui/icons/Timeline";
 import DateRange from "@material-ui/icons/DateRange";
@@ -63,6 +66,27 @@ var dashRoutes = [
     name: "Dashboard",
     icon: DashboardIcon,
     component: Dashboard
+  },
+  {
+    collapse: true,
+    path: "/stocks",
+    name: "股票",
+    state: "openStock",
+    icon: Assessment,
+    views: [
+      {
+        path: "/stocks/list",
+        name: "公司列表",
+        mini: "STS",
+        component: StockList
+      },
+      {
+        path: "/stocks/shareholders",
+        name: "大股東列表",
+        mini: "SHS",
+        component: Shareholders
+      }      
+    ]
   },
   { redirect: true, path: "/", pathTo: "/dashboard", name: "Dashboard" }
 ];

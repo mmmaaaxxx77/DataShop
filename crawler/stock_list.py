@@ -1,9 +1,13 @@
+import datetime
 from time import sleep
 import xlsxwriter
 import re
 
 import requests
 from bs4 import BeautifulSoup
+from mongoengine import connect
+
+from .model import Stock, ShareHolder
 
 
 def get_url_stock_total(stock_id):
@@ -102,6 +106,76 @@ def write_excel(stock_name, stock_id, path):
         worksheet.write(_indx, 3, d[3])
 
     workbook.close()
+
+
+def auto_maintain():
+    connect('datashop-mongo')
+
+    def _write_director_to_mongo(stock_name, stock_id, type, update_date, data):
+
+        for d in data:
+            _data = {
+                'type': type,
+                'stock_id': stock_id,
+                'stock_name': stock_name,
+                'stock_update_date': update_date,
+                'create_date': datetime.datetime.now(),
+                'shareholder_position': d[0],
+                'shareholder_name': d[1],
+                'shareholder_stock_count': d[2],
+                'shareholder_stock_percentage': d[3],
+            }
+            print(_data)
+            # TODO write to mongo
+
+    def _do_work(url, type):
+
+        # get stock list
+        stock_list = get_url_stock_list(url)
+
+        # write to mongo
+        Stock.objects().delete()
+        print("清除所有Stock資料")
+        for d in stock_list:
+            _data = Stock(stock_id=d[2], stock_name=d[3])
+            _data.save()
+
+        # format all data
+        for index in range(0, len(stock_list)):
+            stock = stock_list[index]
+            stock_name, stock_id = stock[3], stock[2]
+            update_date, data = get_stock_director(stock_id)
+
+            print(f"清除所有 {stock_name} {stock_id} 資料")
+            ShareHolder.objects(stock_id=stock_id).delete()
+
+            print(f"開始寫入 {stock_name} {stock_id} 資料")
+            _write_director_to_mongo(stock_name, stock_id, type, update_date, data)
+
+    # # 上市
+    # print("---上市---")
+    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+    #        "owncode=&stockname=&isincode=&market=1&"
+    #        "issuetype=1&industry_code=&Page=1&chklike=Y")
+    #
+    # _do_work(url, "上市")
+    # sleep(10)
+    #
+    # print("---上櫃---")
+    # # 上櫃
+    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+    #        "owncode=&stockname=&isincode=&market=2&"
+    #        "issuetype=4&industry_code=&Page=1&chklike=Y")
+    # _do_work(url, "上櫃")
+    # sleep(10)
+
+    print("---興櫃---")
+    # 興櫃
+    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+           "owncode=&stockname=&isincode=&market=4&"
+           "issuetype=R&industry_code=&Page=1&chklike=Y")
+    _do_work(url, "興櫃")
+    sleep(10)
 
 
 if __name__ == '__main__':

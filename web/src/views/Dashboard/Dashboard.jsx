@@ -10,10 +10,10 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Tooltip from "@material-ui/core/Tooltip";
 
 // @material-ui/icons
-import ContentCopy from "@material-ui/icons/ContentCopy";
+import Assessment from "@material-ui/icons/Assessment";
 import Store from "@material-ui/icons/Store";
 import InfoOutline from "@material-ui/icons/InfoOutline";
-import Warning from "@material-ui/icons/Warning";
+import List from "@material-ui/icons/List";
 import DateRange from "@material-ui/icons/DateRange";
 import LocalOffer from "@material-ui/icons/LocalOffer";
 import Update from "@material-ui/icons/Update";
@@ -87,57 +87,21 @@ class Dashboard extends React.Component {
         <GridContainer>
           <GridItem xs={12} sm={6} md={6} lg={3}>
             <Card>
-              <CardHeader color="warning" stats icon>
-                <CardIcon color="warning">
-                  <ContentCopy />
+              <CardHeader color="info" stats icon>
+                <CardIcon color="info">
+                  <Assessment />
                 </CardIcon>
-                <p className={classes.cardCategory}>Used Space</p>
+                <p className={classes.cardCategory}>上市股票數量</p>
                 <h3 className={classes.cardTitle}>
-                  49/50 <small>GB</small>
+                  0 <small>檔</small>
                 </h3>
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
-                  <Danger>
-                    <Warning />
-                  </Danger>
-                  <a href="#pablo" onClick={e => e.preventDefault()}>
-                    Get more space
+                  <List />
+                  <a href="#" onClick={e => e.preventDefault()}>
+                    顯示列表
                   </a>
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={6} md={6} lg={3}>
-            <Card>
-              <CardHeader color="success" stats icon>
-                <CardIcon color="success">
-                  <Store />
-                </CardIcon>
-                <p className={classes.cardCategory}>Revenue</p>
-                <h3 className={classes.cardTitle}>$34,245</h3>
-              </CardHeader>
-              <CardFooter stats>
-                <div className={classes.stats}>
-                  <DateRange />
-                  Last 24 Hours
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={6} md={6} lg={3}>
-            <Card>
-              <CardHeader color="danger" stats icon>
-                <CardIcon color="danger">
-                  <InfoOutline />
-                </CardIcon>
-                <p className={classes.cardCategory}>Fixed Issues</p>
-                <h3 className={classes.cardTitle}>75</h3>
-              </CardHeader>
-              <CardFooter stats>
-                <div className={classes.stats}>
-                  <LocalOffer />
-                  Tracked from Github
                 </div>
               </CardFooter>
             </Card>
@@ -146,19 +110,44 @@ class Dashboard extends React.Component {
             <Card>
               <CardHeader color="info" stats icon>
                 <CardIcon color="info">
-                  <i className="fab fa-twitter" />
+                  <Assessment />
                 </CardIcon>
-                <p className={classes.cardCategory}>Followers</p>
-                <h3 className={classes.cardTitle}>+245</h3>
+                <p className={classes.cardCategory}>上櫃股票數量</p>
+                <h3 className={classes.cardTitle}>
+                  0 <small>檔</small>
+                </h3>
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
-                  <Update />
-                  Just Updated
+                  <List />
+                  <a href="#">
+                    顯示列表
+                  </a>
                 </div>
               </CardFooter>
             </Card>
           </GridItem>
+          <GridItem xs={12} sm={6} md={6} lg={3}>
+            <Card>
+              <CardHeader color="info" stats icon>
+                <CardIcon color="info">
+                  <Assessment />
+                </CardIcon>
+                <p className={classes.cardCategory}>興櫃股票數量</p>
+                <h3 className={classes.cardTitle}>
+                  0 <small>檔</small>
+                </h3>
+              </CardHeader>
+              <CardFooter stats>
+                <div className={classes.stats}>
+                  <List />
+                  <a href="#">
+                    顯示列表
+                  </a>
+                </div>
+              </CardFooter>
+            </Card>
+          </GridItem>           
         </GridContainer>
         {/*<GridContainer>
           <GridItem xs={12}>
