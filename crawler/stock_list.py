@@ -109,7 +109,6 @@ def write_excel(stock_name, stock_id, path):
 
 
 def auto_maintain():
-    connect('datashop-mongo')
 
     def _write_director_to_mongo(stock_name, stock_id, type, update_date, data):
 

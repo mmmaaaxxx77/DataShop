@@ -1,6 +1,8 @@
 from mongoengine import *
 import datetime
 
+connect('datashop-mongo')
+
 
 class Stock(Document):
     id = StringField(required=True)
