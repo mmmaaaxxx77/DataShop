@@ -161,6 +161,8 @@ def auto_maintain():
             print(f"開始寫入 {stock_name} {stock_id} 資料")
             _write_director_to_mongo(stock_name, stock_id, type, update_date, data)
 
+            sleep(10)
+
     # 上市
     print("---上市---")
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
