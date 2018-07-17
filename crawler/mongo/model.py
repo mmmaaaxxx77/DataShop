@@ -11,6 +11,8 @@ class Stock(Document):
 
 
 class ShareHolder(Document):
+    stock_id = StringField(required=True)
+    stock_name = StringField(required=True)
     position = StringField(required=True)
     name = StringField(required=True)
     stock_count = LongField(required=True)
