@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from mongoengine import connect
 
-from .model import Stock, ShareHolder
+from .mongo.model import Stock, ShareHolder
 
 
 def get_url_stock_total(stock_id):
