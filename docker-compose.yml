@@ -37,6 +37,8 @@ services:
     image: mongo
     hostname: datashop-mongo
     container_name: datashop-mongo
+    ports:
+      - "22007:27017"
     environment:
       - TZ=Asia/Taipei
     volumes:

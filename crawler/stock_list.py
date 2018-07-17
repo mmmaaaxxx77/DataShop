@@ -136,7 +136,8 @@ def auto_maintain():
         Stock.objects().delete()
         print("清除所有Stock資料")
         for d in stock_list:
-            _data = Stock(id=d[2], name=d[3])
+            print(f"{d[2]} f{d[3]}")
+            _data = Stock(stock_id=d[2], stock_name=d[3])
             _data.save()
 
         # format all data

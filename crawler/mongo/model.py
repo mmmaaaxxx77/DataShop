@@ -5,8 +5,8 @@ connect('stock', host='datashop-mongo')
 
 
 class Stock(Document):
-    id = StringField(required=True)
-    name = StringField(required=True)
+    stock_id = StringField(required=True)
+    stock_name = StringField(required=True)
     create_date = DateTimeField(default=datetime.datetime.now)
 
 
