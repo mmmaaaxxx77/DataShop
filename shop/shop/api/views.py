@@ -1,6 +1,8 @@
 import datetime
 
 import math
+
+import io
 import os
 from wsgiref.util import FileWrapper
 
@@ -8,6 +10,7 @@ import pytz
 import xlsxwriter
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.views import View
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -184,41 +187,51 @@ class StockShareHolder(APIView):
         })
 
 
-class downloadStockExcel(APIView):
-    def get(self, request, format=None):
-        stock_id = str(self.request.query_params.get('stock_id', None))
+def WriteToExcel(data, town=None):
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
 
-        all = ShareHolder.objects(stock_id=stock_id).all()
+    worksheet = workbook.add_worksheet()
 
-        if len(all) == 0:
+    worksheet.write(0, 0, '職稱')
+    worksheet.write(0, 1, '姓名/法人名稱')
+    worksheet.write(0, 2, '持股張數')
+    worksheet.write(0, 3, '持股比例')
+
+    for indx in range(0, len(data)):
+        d = data[indx]
+        _indx = indx + 1
+        worksheet.write(_indx, 0, d.position)
+        worksheet.write(_indx, 1, d.name)
+        worksheet.write(_indx, 2, d.stock_count)
+        worksheet.write(_indx, 3, d.stock_percentage)
+
+    workbook.close()
+    #xlsx_data = output.getvalue()
+    return output
+
+
+class downloadStockExcel(View):
+    def get(self, request):
+        stock_id = str(request.GET.get('stock_id', None))
+
+        _all = ShareHolder.objects(stock_id=stock_id).all()
+
+        if len(_all) == 0:
             return Response(status=status.HTTP_303_SEE_OTHER)
 
-        one = all[0]
-        if not os.path.exists('/tmp/excel/'):
-            os.makedirs('/tmp/excel/')
-        file_name = f'{one.stock_id}_{one.stock_name}_{one.stock_update_date}.xlsx'
-        file_path = f'/tmp/excel/{file_name}'
-        workbook = xlsxwriter.Workbook(file_path)
-        worksheet = workbook.add_worksheet()
+        file_name = f'{_all[0].stock_id}_{_all[0].stock_name}.xlsx'
 
-        worksheet.write(0, 0, '職稱')
-        worksheet.write(0, 1, '姓名/法人名稱')
-        worksheet.write(0, 2, '持股張數')
-        worksheet.write(0, 3, '持股比例')
+        xlsx_data = WriteToExcel(_all)
+        response = HttpResponse(xlsx_data.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8 ')
+        response['Content-Disposition'] = f'attachment; filename={file_name}'
+        xlsx_data.close()
 
-        for indx in range(0, len(all)):
-            d = all[indx]
-            _indx = indx + 1
-            worksheet.write(_indx, 0, d.position)
-            worksheet.write(_indx, 1, d.name)
-            worksheet.write(_indx, 2, d.stock_count)
-            worksheet.write(_indx, 3, d.stock_percentage)
+        # file_path = "/Users/johnny/Desktop/test.txt"
+        # if os.path.exists(file_path):
+        #     with open(file_path, 'rb') as fh:
+        #         response = HttpResponse(fh.read(), content_type="text/plain")
+        #         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+        #         return response
 
-        workbook.close()
-
-
-        excel_file = open(file_path, 'rb')
-        response = HttpResponse(FileWrapper(excel_file),
-                                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % 'test1.mp4'
         return response

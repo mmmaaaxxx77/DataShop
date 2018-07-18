@@ -138,7 +138,7 @@ class ReactTables extends React.Component {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', stock_id + "_" + stock_name + ".xlsx");
+        //link.setAttribute('download', stock_id + "_" + stock_name + ".xlsx");
         document.body.appendChild(link);
         link.click();        
      })
@@ -161,9 +161,8 @@ class ReactTables extends React.Component {
                     justIcon
                     round
                     simple
-                    onClick={() => {
-                      self.downloadStock(prop['stock_id'], prop['stock_name']);
-                    }}
+                    href={URL + STOCK_SHAREHOLDER_EXCEL_DL + "?stock_id=" + prop['stock_id']}
+                    target="_blank"
                     color="info"
                     className="like"
                     size="lg"
