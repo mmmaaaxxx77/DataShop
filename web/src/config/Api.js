@@ -8,3 +8,4 @@ export const USER = "/user";
 export const STOCK_LIST = "/stock";
 export const STOCK_DETAIL = "/stock/detail";
 export const STOCK_SHAREHOLDER = "/shareholder";
+export const STOCK_SHAREHOLDER_EXCEL_DL = "/shareholder/excel";

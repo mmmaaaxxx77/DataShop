@@ -9,6 +9,7 @@ import Assignment from "@material-ui/icons/Assignment";
 import ViewList from "@material-ui/icons/ViewList";
 import Dvr from "@material-ui/icons/Dvr";
 import Favorite from "@material-ui/icons/Favorite";
+import Archive from "@material-ui/icons/Archive";
 import Close from "@material-ui/icons/Close";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -25,6 +26,10 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 
 import { getStockList } from "../../util/Stock";
 import { setPersistStore } from "../../util/Auth";
+
+import axios from 'axios';
+import { URL, STOCK_SHAREHOLDER_EXCEL_DL } from '../../config/Api';
+import store from '../../store';
 
 const styles = {
   cardIconTitle: {
@@ -126,6 +131,19 @@ class ReactTables extends React.Component {
     };*/}
   }
 
+  downloadStock(stock_id) {
+    const token = store.getState().token;
+    axios.get(URL + STOCK_SHAREHOLDER_EXCEL_DL,
+     { headers: { Authorization: 'Token ' + token } }).then(function(response){
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file');
+        document.body.appendChild(link);
+        link.click();        
+     })
+  }
+
   componentDidMount() {
     const self = this;
     setPersistStore(
@@ -136,7 +154,24 @@ class ReactTables extends React.Component {
             return {
               id: key,
               stock_id: prop['stock_id'],
-              stock_name: prop['stock_name']
+              stock_name: prop['stock_name'],
+              actions: (
+                <div className="actions-right">
+                  <Button
+                    justIcon
+                    round
+                    simple
+                    onClick={() => {
+                      self.downloadStock(prop['stock_id']);
+                    }}
+                    color="info"
+                    className="like"
+                    size="lg"
+                  >
+                    <Archive />
+                  </Button>{" "}
+                </div>
+              )              
             }
           })});
       });
@@ -167,7 +202,13 @@ class ReactTables extends React.Component {
                   {
                     Header: "公司名稱",
                     accessor: "stock_name"
-                  }                
+                  },
+                  {
+                    Header: "下載大股東EXCEL",
+                    accessor: "actions",
+                    sortable: false,
+                    filterable: false                    
+                  }                                    
                 ]}
                 defaultPageSize={10}
                 showPaginationTop
