@@ -165,30 +165,43 @@ def auto_maintain():
 
             sleep(10)
 
+    def _do_work_only_stock(url, type):
+
+        # get stock list
+        stock_list = get_url_stock_list(url)
+
+        # write to mongo
+        Stock.objects().delete()
+        print("清除所有Stock資料")
+        for d in stock_list:
+            print(f"{d[2]} {d[3]}")
+            _data = Stock(stock_id=d[2], stock_name=d[3], stock_type=type)
+            _data.save()
+
     # 上市
-    print("---上市---")
-    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-           "owncode=&stockname=&isincode=&market=1&"
-           "issuetype=1&industry_code=&Page=1&chklike=Y")
-
-    _do_work(url, "上市")
-    sleep(10)
+    # print("---上市---")
+    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+    #        "owncode=&stockname=&isincode=&market=1&"
+    #        "issuetype=1&industry_code=&Page=1&chklike=Y")
     #
-    # print("---上櫃---")
-    # # 上櫃
-    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-    #        "owncode=&stockname=&isincode=&market=2&"
-    #        "issuetype=4&industry_code=&Page=1&chklike=Y")
-    # _do_work(url, "上櫃")
+    # _do_work(url, "上市")
     # sleep(10)
 
-    # print("---興櫃---")
-    # # 興櫃
-    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-    #        "owncode=&stockname=&isincode=&market=4&"
-    #        "issuetype=R&industry_code=&Page=1&chklike=Y")
-    # _do_work(url, "興櫃")
-    # sleep(10)
+    print("---上櫃---")
+    # 上櫃
+    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+           "owncode=&stockname=&isincode=&market=2&"
+           "issuetype=4&industry_code=&Page=1&chklike=Y")
+    _do_work(url, "上櫃")
+    sleep(10)
+
+    print("---興櫃---")
+    # 興櫃
+    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+           "owncode=&stockname=&isincode=&market=4&"
+           "issuetype=R&industry_code=&Page=1&chklike=Y")
+    _do_work_only_stock(url, "興櫃")
+    sleep(10)
 
 
 
