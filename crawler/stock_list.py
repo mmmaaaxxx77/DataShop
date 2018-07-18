@@ -86,6 +86,41 @@ def get_stock_director(stock_id):
     return int(update_date), result_list
 
 
+def get_stock_director03(stock_id):
+    url = f"https://sjmain.esunsec.com.tw/z/zu/zub/zubf/zubfa/zubfa_ASR{stock_id}.djhtm"
+
+    ret = requests.get(url)
+    # ret.encoding = 'utf8'
+
+    bu = BeautifulSoup(ret.text, 'html.parser')
+    print(stock_id)
+    _list = bu.select("table.zuTable2")[0].select("tr")[2:]
+
+    list = []
+    for lis in _list:
+        if '＊來自' in lis.text:
+            break
+        else:
+            list.append(lis)
+
+    result_list = []
+
+    def _data_clear(tds):
+        rs = []
+        rs.append(tds[0].text.strip())
+        rs.append(tds[1].text.strip())
+        rs.append(tds[2].text.strip().replace(",", ""))
+        rs.append(tds[3].text.strip())
+        return rs
+
+    for d in list:
+        result_list.append(_data_clear(d.select("td")))
+
+    update_date = bu.select("div.zuHead1-10R")[0].text.strip()[:11].replace("資料日期:", "").replace("/", "")
+
+    return int(update_date), result_list
+
+
 def write_excel(stock_name, stock_id, path):
     update_date, data = get_stock_director(stock_id)
     workbook = xlsxwriter.Workbook(f'{path}/{stock_id}_{stock_name}_{update_date}.xlsx')
@@ -165,7 +200,7 @@ def auto_maintain():
 
             sleep(10)
 
-    def _do_work_only_stock(url, type):
+    def _do_work_only_03_stock(url, type):
 
         # get stock list
         stock_list = get_url_stock_list(url)
@@ -178,29 +213,44 @@ def auto_maintain():
             _data = Stock(stock_id=d[2], stock_name=d[3], stock_type=type)
             _data.save()
 
-    # 上市
-    print("---上市---")
-    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-           "owncode=&stockname=&isincode=&market=1&"
-           "issuetype=1&industry_code=&Page=1&chklike=Y")
+        # format all data
+        for index in range(0, len(stock_list)):
+            stock = stock_list[index]
+            stock_name, stock_id = stock[3], stock[2]
+            update_date, data = get_stock_director03(stock_id)
 
-    _do_work(url, "上市")
-    sleep(10)
+            print(f"清除所有 {stock_name} {stock_id} 資料")
+            ShareHolder.objects(stock_id=stock_id).delete()
 
-    print("---上櫃---")
-    # 上櫃
-    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-           "owncode=&stockname=&isincode=&market=2&"
-           "issuetype=4&industry_code=&Page=1&chklike=Y")
-    _do_work(url, "上櫃")
-    sleep(10)
+            print(f"開始寫入 {stock_name} {stock_id} 資料")
+            _write_director_to_mongo(stock_name, stock_id, type, update_date, data)
+
+            sleep(10)
+
+
+    # # 上市
+    # print("---上市---")
+    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+    #        "owncode=&stockname=&isincode=&market=1&"
+    #        "issuetype=1&industry_code=&Page=1&chklike=Y")
+    #
+    # _do_work(url, "上市")
+    # sleep(10)
+    #
+    # print("---上櫃---")
+    # # 上櫃
+    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+    #        "owncode=&stockname=&isincode=&market=2&"
+    #        "issuetype=4&industry_code=&Page=1&chklike=Y")
+    # _do_work(url, "上櫃")
+    # sleep(10)
 
     print("---興櫃---")
     # 興櫃
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=4&"
            "issuetype=R&industry_code=&Page=1&chklike=Y")
-    _do_work_only_stock(url, "興櫃")
+    _do_work_only_03_stock(url, "興櫃")
     sleep(10)
 
 
@@ -211,6 +261,7 @@ def auto_maintain():
 if __name__ == '__main__':
 
     auto_maintain()
+    #print(get_stock_director03(1240))
 
     # print(get_url_stock_total(1264))
     # print(get_url_stock_total(1258))
