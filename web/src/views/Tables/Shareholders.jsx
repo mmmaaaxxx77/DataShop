@@ -92,6 +92,12 @@ class ReactTables extends React.Component {
                 filterable
                 columns={[
                   {
+                    Header: "類別",
+                    accessor: "stock_type",
+                    sortable: false,
+                    width: 60
+                  },                  
+                  {
                     Header: "股票代號",
                     accessor: "stock_id",
                     sortable: false
@@ -183,6 +189,7 @@ class ReactTables extends React.Component {
                           data: res.data.data.map((prop, key) => {
                             return {
                               id: key,
+                              stock_type: prop['stock_type'],
                               stock_id: prop['stock_id'],
                               stock_name: prop['stock_name'],
                               position: prop['position'],
