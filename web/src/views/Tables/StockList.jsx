@@ -131,14 +131,14 @@ class ReactTables extends React.Component {
     };*/}
   }
 
-  downloadStock(stock_id) {
+  downloadStock(stock_id, stock_name) {
     const token = store.getState().token;
-    axios.get(URL + STOCK_SHAREHOLDER_EXCEL_DL,
+    axios.get(URL + STOCK_SHAREHOLDER_EXCEL_DL + "?stock_id=" + stock_id,
      { headers: { Authorization: 'Token ' + token } }).then(function(response){
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'file');
+        link.setAttribute('download', stock_id + "_" + stock_name + ".xlsx");
         document.body.appendChild(link);
         link.click();        
      })
@@ -162,7 +162,7 @@ class ReactTables extends React.Component {
                     round
                     simple
                     onClick={() => {
-                      self.downloadStock(prop['stock_id']);
+                      self.downloadStock(prop['stock_id'], prop['stock_name']);
                     }}
                     color="info"
                     className="like"
