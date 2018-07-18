@@ -151,6 +151,9 @@ class ReactTables extends React.Component {
         getStockList().then(function(d){
           console.log(d);
           self.setState({data:d.data.data.map((prop, key) => {
+
+            let filename = prop['stock_id'] + "_" + prop['stock_name'];
+
             return {
               id: key,
               stock_id: prop['stock_id'],
@@ -161,7 +164,7 @@ class ReactTables extends React.Component {
                     justIcon
                     round
                     simple
-                    href={URL + STOCK_SHAREHOLDER_EXCEL_DL + "?stock_id=" + prop['stock_id']}
+                    href={URL + STOCK_SHAREHOLDER_EXCEL_DL + "/" + filename + "?stock_id=" + prop['stock_id']}
                     target="_blank"
                     color="info"
                     className="like"

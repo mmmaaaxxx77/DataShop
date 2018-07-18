@@ -11,5 +11,5 @@ urlpatterns = [
     url(r'^stock$', AllStock.as_view(), name='get_all_stocks'),
     url(r'^shareholder$', StockShareHolder.as_view(), name='get_all_shareholder'),
     url(r'^stock/detail$', StockDetail.as_view(), name='get_stock_detail'),
-    url(r'^shareholder/excel$', downloadStockExcel.as_view(), name='get_stock_excel')
+    url(r'^shareholder/excel/(?P<filename>.+)$', downloadStockExcel.as_view(), name='get_stock_excel')
 ]

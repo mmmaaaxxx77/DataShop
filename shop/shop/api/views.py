@@ -212,7 +212,7 @@ def WriteToExcel(data, town=None):
 
 
 class downloadStockExcel(View):
-    def get(self, request):
+    def get(self, request, filename):
         stock_id = str(request.GET.get('stock_id', None))
 
         _all = ShareHolder.objects(stock_id=stock_id).all()
