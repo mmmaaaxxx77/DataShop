@@ -1,6 +1,7 @@
 import datetime
 
 import math
+import os
 from wsgiref.util import FileWrapper
 
 import pytz
@@ -193,6 +194,8 @@ class downloadStockExcel(APIView):
             return Response(status=status.HTTP_303_SEE_OTHER)
 
         one = all[0]
+        if not os.path.exists('/tmp/excel/'):
+            os.makedirs('/tmp/excel/')
         file_name = f'{one.stock_id}_{one.stock_name}_{one.stock_update_date}.xlsx'
         file_path = f'/tmp/excel/{file_name}'
         workbook = xlsxwriter.Workbook(file_path)
