@@ -144,7 +144,7 @@ def auto_maintain():
         stock_list = get_url_stock_list(url)
 
         # write to mongo
-        Stock.objects().delete()
+        Stock.objects(stock_type=type).delete()
         print("清除所有Stock資料")
         for d in stock_list:
             print(f"{d[2]} {d[3]}")
@@ -171,7 +171,7 @@ def auto_maintain():
         stock_list = get_url_stock_list(url)
 
         # write to mongo
-        Stock.objects().delete()
+        Stock.objects(stock_type=type).delete()
         print("清除所有Stock資料")
         for d in stock_list:
             print(f"{d[2]} {d[3]}")
@@ -179,13 +179,13 @@ def auto_maintain():
             _data.save()
 
     # 上市
-    # print("---上市---")
-    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-    #        "owncode=&stockname=&isincode=&market=1&"
-    #        "issuetype=1&industry_code=&Page=1&chklike=Y")
-    #
-    # _do_work(url, "上市")
-    # sleep(10)
+    print("---上市---")
+    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+           "owncode=&stockname=&isincode=&market=1&"
+           "issuetype=1&industry_code=&Page=1&chklike=Y")
+
+    _do_work(url, "上市")
+    sleep(10)
 
     print("---上櫃---")
     # 上櫃
