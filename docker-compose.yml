@@ -15,6 +15,10 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     networks:
       - datashop-net
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
 
   web:
     restart: always
@@ -31,6 +35,10 @@ services:
     #tty: true
     networks:
       - datashop-net
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m      
 
   mongo:
     restart: always
@@ -46,6 +54,10 @@ services:
       - /home/johnny/DATASHOP/data/mongo:/etc/mongo
     networks:
       - datashop-net
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
 
   crawler:
     restart: always
@@ -60,11 +72,10 @@ services:
     command: python -c "from stock_list import auto_maintain; auto_maintain();"
     networks:
       - datashop-net
-
-logging:
-  driver: json-file
-  options:
-    max-size: 50m
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
 
 networks:
   datashop-net:
