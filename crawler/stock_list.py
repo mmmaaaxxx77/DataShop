@@ -238,7 +238,6 @@ def auto_maintain():
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=1&"
            "issuetype=1&industry_code=&Page=1&chklike=Y")
-
     try:
         _do_work(url, "上市")
     except Exception as e:
@@ -251,7 +250,10 @@ def auto_maintain():
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=2&"
            "issuetype=4&industry_code=&Page=1&chklike=Y")
-    _do_work(url, "上櫃")
+    try:
+        _do_work(url, "上櫃")
+    except Exception as e:
+        logger.error(traceback.print_stack())
     sleep(10)
 
     logger.info("---興櫃---")
@@ -259,7 +261,10 @@ def auto_maintain():
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=4&"
            "issuetype=R&industry_code=&Page=1&chklike=Y")
-    _do_work_only_03_stock(url, "興櫃")
+    try:
+        _do_work_only_03_stock(url, "興櫃")
+    except Exception as e:
+        logger.error(traceback.print_stack())
     sleep(10)
 
     logger.info("---- ALL DONE ----")
@@ -269,8 +274,8 @@ def auto_maintain():
 
 if __name__ == '__main__':
 
-    #auto_maintain()
-    print(get_stock_director03(1240))
+    auto_maintain()
+    #print(get_stock_director03(1240))
 
     # print(get_url_stock_total(1264))
     # print(get_url_stock_total(1258))
