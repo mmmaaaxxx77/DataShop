@@ -2,12 +2,17 @@ import datetime
 from time import sleep
 import xlsxwriter
 import re
+import traceback
 
 import requests
 from bs4 import BeautifulSoup
 from mongoengine import connect
 
 from mongo.model import Stock, ShareHolder
+
+from logger import logconf
+
+logger = logconf.Logger(__name__)
 
 
 def get_url_stock_total(stock_id):
@@ -65,7 +70,7 @@ def get_stock_director(stock_id):
     # ret.encoding = 'utf8'
 
     bu = BeautifulSoup(ret.text, 'html.parser')
-    print(stock_id)
+    logger.info(stock_id)
     list = bu.select("table.t01")[0].select("tr")[2:-1]
 
     result_list = []
@@ -93,7 +98,7 @@ def get_stock_director03(stock_id):
     # ret.encoding = 'utf8'
 
     bu = BeautifulSoup(ret.text, 'html.parser')
-    print(stock_id)
+    logger.info(stock_id)
     _list = bu.select("table.zuTable2")[0].select("tr")[2:]
 
     list = []
@@ -161,7 +166,7 @@ def auto_maintain():
                 'shareholder_stock_count': d[2],
                 'shareholder_stock_percentage': d[3],
             }
-            print(_data)
+            logger.info(_data)
             # write to mongo
             _model = ShareHolder(stock_id=stock_id,
                                  stock_name=stock_name,
@@ -180,7 +185,7 @@ def auto_maintain():
 
         # write to mongo
         Stock.objects(stock_type=type).delete()
-        print("清除所有Stock資料")
+        logger.info("清除所有Stock資料")
         for d in stock_list:
             print(f"{d[2]} {d[3]}")
             _data = Stock(stock_id=d[2], stock_name=d[3], stock_type=type)
@@ -192,10 +197,10 @@ def auto_maintain():
             stock_name, stock_id = stock[3], stock[2]
             update_date, data = get_stock_director(stock_id)
 
-            print(f"清除所有 {stock_name} {stock_id} 資料")
+            logger.info(f"清除所有 {stock_name} {stock_id} 資料")
             ShareHolder.objects(stock_id=stock_id).delete()
 
-            print(f"開始寫入 {stock_name} {stock_id} 資料")
+            logger.info(f"開始寫入 {stock_name} {stock_id} 資料")
             _write_director_to_mongo(stock_name, stock_id, type, update_date, data)
 
             sleep(10)
@@ -207,7 +212,7 @@ def auto_maintain():
 
         # write to mongo
         Stock.objects(stock_type=type).delete()
-        print("清除所有Stock資料")
+        logger.info("清除所有Stock資料")
         for d in stock_list:
             print(f"{d[2]} {d[3]}")
             _data = Stock(stock_id=d[2], stock_name=d[3], stock_type=type)
@@ -219,33 +224,37 @@ def auto_maintain():
             stock_name, stock_id = stock[3], stock[2]
             update_date, data = get_stock_director03(stock_id)
 
-            print(f"清除所有 {stock_name} {stock_id} 資料")
+            logger.info(f"清除所有 {stock_name} {stock_id} 資料")
             ShareHolder.objects(stock_id=stock_id).delete()
 
-            print(f"開始寫入 {stock_name} {stock_id} 資料")
+            logger.info(f"開始寫入 {stock_name} {stock_id} 資料")
             _write_director_to_mongo(stock_name, stock_id, type, update_date, data)
 
             sleep(10)
 
 
-    # # 上市
-    # print("---上市---")
-    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-    #        "owncode=&stockname=&isincode=&market=1&"
-    #        "issuetype=1&industry_code=&Page=1&chklike=Y")
-    #
-    # _do_work(url, "上市")
-    # sleep(10)
-    #
-    # print("---上櫃---")
-    # # 上櫃
-    # url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
-    #        "owncode=&stockname=&isincode=&market=2&"
-    #        "issuetype=4&industry_code=&Page=1&chklike=Y")
-    # _do_work(url, "上櫃")
-    # sleep(10)
+    # 上市
+    logger.info("---上市---")
+    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+           "owncode=&stockname=&isincode=&market=1&"
+           "issuetype=1&industry_code=&Page=1&chklike=Y")
 
-    print("---興櫃---")
+    try:
+        _do_work(url, "上市")
+    except Exception as e:
+        logger.error(traceback.print_stack())
+
+    sleep(10)
+
+    logger.info("---上櫃---")
+    # 上櫃
+    url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
+           "owncode=&stockname=&isincode=&market=2&"
+           "issuetype=4&industry_code=&Page=1&chklike=Y")
+    _do_work(url, "上櫃")
+    sleep(10)
+
+    logger.info("---興櫃---")
     # 興櫃
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=4&"
@@ -253,15 +262,15 @@ def auto_maintain():
     _do_work_only_03_stock(url, "興櫃")
     sleep(10)
 
-    print("---- ALL DONE ----")
+    logger.info("---- ALL DONE ----")
 
-    sleep(60 * 60 * 24 * 3)
+    sleep(60 * 60 * 24 * 2)
 
 
 if __name__ == '__main__':
 
-    auto_maintain()
-    #print(get_stock_director03(1240))
+    #auto_maintain()
+    print(get_stock_director03(1240))
 
     # print(get_url_stock_total(1264))
     # print(get_url_stock_total(1258))
