@@ -61,5 +61,10 @@ services:
     networks:
       - datashop-net
 
+logging:
+  driver: json-file
+  options:
+    max-size: 50m
+
 networks:
   datashop-net:
