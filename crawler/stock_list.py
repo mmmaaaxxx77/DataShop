@@ -169,7 +169,7 @@ def auto_maintain():
                                  position=d[0],
                                  name=d[1],
                                  stock_count=d[2],
-                                 stock_percentage=d[3],
+                                 stock_percentage=d[3] if '%' in d[3] else f'{d[3]}%',
                                  stock_update_date=str(update_date))
             _model.save()
 
@@ -253,7 +253,7 @@ def auto_maintain():
     _do_work_only_03_stock(url, "興櫃")
     sleep(10)
 
-
+    print("---- ALL DONE ----")
 
     sleep(60 * 60 * 24 * 3)
 
