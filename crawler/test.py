@@ -4,7 +4,7 @@ from asyncio import sleep
 import requests
 from bs4 import BeautifulSoup
 
-from crawler.mongo.model import CollectorCount
+from mongo.model import CollectorCount
 import traceback
 
 from logger import logconf
