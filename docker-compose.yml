@@ -12,7 +12,8 @@ services:
     ports:
       - "5666:8000"
     container_name: datashop
-    command: python manage.py runserver 0.0.0.0:8000
+    #command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "uwsgi --ini uwsgi.ini"
     networks:
       - datashop-net
     logging:
