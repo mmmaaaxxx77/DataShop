@@ -15,6 +15,7 @@ import ExtendedTables from "views/Tables/ExtendedTables.jsx";
 import ReactTables from "views/Tables/ReactTables.jsx";
 import StockList from "views/Tables/StockList.jsx";
 import Shareholders from "views/Tables/Shareholders.jsx";
+import CollectorCount from "views/Tables/CollectorCount.jsx";
 import GoogleMaps from "views/Maps/GoogleMaps.jsx";
 import FullScreenMap from "views/Maps/FullScreenMap.jsx";
 import VectorMap from "views/Maps/VectorMap.jsx";
@@ -85,6 +86,12 @@ var dashRoutes = [
         name: "大股東列表",
         mini: "SHS",
         component: Shareholders
+      },
+      {
+        path: "/stocks/collectorcount",
+        name: "集保戶股權每週差異",
+        mini: "CCS",
+        component: CollectorCount
       }      
     ]
   },

@@ -22,7 +22,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
-from shop.api.mongo.model import Stock, ShareHolder
+from shop.api.mongo.model import Stock, ShareHolder, CollectorCount
 
 
 class ExpiringTokenAuthentication(TokenAuthentication):
@@ -191,6 +191,71 @@ class StockShareHolder(APIView):
         })
 
 
+class CollectorCountView(APIView):
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        page_size = int(self.request.query_params.get('pageSize', 10))
+        page = int(self.request.query_params.get('page', 0))
+        stock_id = str(self.request.query_params.get('stock_id', None))
+        stock_name = str(self.request.query_params.get('stock_name', None))
+        date = str(self.request.query_params.get('data_date', None))
+        dcount = int(self.request.query_params.get('data_count', 0))
+        difference_count = int(self.request.query_params.get('data_difference_count', 0))
+
+        count_sort = str(self.request.query_params.get('data_count_sort', None))
+        difference_count_sort = str(self.request.query_params.get('data_difference_count_sort', None))
+        stock_type = str(self.request.query_params.get('stock_type', None))
+
+        _filter = {}
+
+        if stock_id != 'None':
+            _filter['stock_id'] = stock_id
+        if stock_name != 'None':
+            _filter['stock_name__contains'] = stock_name
+        if date != 'None':
+            _filter['data_date'] = date
+        if dcount != 0:
+            _filter['data_count'] = dcount
+        if difference_count != 0:
+            _filter['data_difference_count'] = difference_count
+        if stock_type != 'None':
+            _filter['stock_type__contains'] = stock_type
+
+        all = CollectorCount.objects(**_filter)
+
+        if count_sort == 'desc':
+            all = all.order_by('-data_count')
+        elif count_sort == 'asc':
+            all = all.order_by('data_count')
+
+        if difference_count_sort == 'desc':
+            all = all.order_by('-data_difference_count')
+        elif difference_count_sort == 'asc':
+            all = all.order_by('data_difference_count')
+
+        count = all.count()
+
+        all = all.skip(page * page_size).limit(page_size).all()
+
+        request = []
+        for stock in all:
+            request.append({
+                'stock_type': stock.stock_type,
+                'stock_id': stock.stock_id,
+                'stock_name': stock.stock_name,
+                'data_date': stock.data_date,
+                'data_count': stock.data_count,
+                'data_difference_count': int(stock.data_difference_count),
+                'create_date': stock.create_date,
+            })
+        return Response({
+            'data': request,
+            'count': math.ceil(count / page_size)
+        })
+
+
 def WriteToExcel(data, town=None):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
@@ -211,7 +276,7 @@ def WriteToExcel(data, town=None):
         worksheet.write(_indx, 3, d.stock_percentage)
 
     workbook.close()
-    #xlsx_data = output.getvalue()
+    # xlsx_data = output.getvalue()
     return output
 
 
@@ -227,7 +292,8 @@ class downloadStockExcel(View):
         file_name = f'{_all[0].stock_id}_{_all[0].stock_name}.xlsx'
 
         xlsx_data = WriteToExcel(_all)
-        response = HttpResponse(xlsx_data.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8 ')
+        response = HttpResponse(xlsx_data.getvalue(),
+                                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8 ')
         response['Content-Disposition'] = f'attachment; filename={file_name}'
         xlsx_data.close()
 

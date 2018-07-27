@@ -77,5 +77,23 @@ services:
       options:
         max-size: 50m
 
+  crawler2:
+    restart: always
+    build: ./crawler
+    hostname: datashop-crawler2
+    environment:
+      - TZ=Asia/Taipei
+    volumes:
+      - /etc/localtime:/etc/localtime
+    container_name: datashop-crawler2
+    #tty: true
+    command: python -c "from test import auto_maintain; auto_maintain();"
+    networks:
+      - datashop-net
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+
 networks:
   datashop-net:
