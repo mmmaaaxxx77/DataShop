@@ -37,6 +37,7 @@ def get_dates(num=5):
     ret = requests.post(url, data=pdata)
 
     if "timed out" in ret.text:
+        sleep(30)
         return get_dates()
 
     result = json.loads(ret.text)[:num]
@@ -59,6 +60,7 @@ def get_stock_data(stock_id=1240, date=20180720, from_n=0):
     ret = requests.post(url, data=pdata)
 
     if "timed out" in ret.text:
+        sleep(30)
         return get_stock_data(stock_id, date, from_n)
 
     bu = BeautifulSoup(ret.text, 'html.parser')
