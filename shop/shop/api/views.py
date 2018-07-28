@@ -223,7 +223,7 @@ class CollectorCountView(APIView):
         if stock_type != 'None':
             _filter['stock_type__contains'] = stock_type
 
-        all = CollectorCount.objects(**_filter)
+        all = CollectorCount.objects(**_filter).order_by('-data_date')
 
         if count_sort == 'desc':
             all = all.order_by('-data_count')
@@ -237,7 +237,7 @@ class CollectorCountView(APIView):
 
         count = all.count()
 
-        all = all.skip(page * page_size).order_by('-data_date').limit(page_size).all()
+        all = all.skip(page * page_size).limit(page_size).all()
 
         request = []
         for stock in all:
