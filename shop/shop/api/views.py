@@ -237,7 +237,7 @@ class CollectorCountView(APIView):
 
         count = all.count()
 
-        all = all.skip(page * page_size).limit(page_size).all()
+        all = all.skip(page * page_size).order_by('-data_date').limit(page_size).all()
 
         request = []
         for stock in all:

@@ -145,7 +145,7 @@ def auto_maintain():
             stock_id = stock[2]
             logger.info(f"{stock_id} {stock_name}")
             do_count_stock(stock_id, stock_name, type)
-            sleep(2)
+            sleep(5)
 
     # 上市
     logger.info("---上市---")
@@ -153,7 +153,7 @@ def auto_maintain():
            "owncode=&stockname=&isincode=&market=1&"
            "issuetype=1&industry_code=&Page=1&chklike=Y")
     _do_work(url, "上市")
-    sleep(10)
+    sleep(30)
 
     logger.info("---上櫃---")
     # 上櫃
@@ -161,7 +161,7 @@ def auto_maintain():
            "owncode=&stockname=&isincode=&market=2&"
            "issuetype=4&industry_code=&Page=1&chklike=Y")
     _do_work(url, "上櫃")
-    sleep(10)
+    sleep(30)
 
     logger.info("---興櫃---")
     # 興櫃
@@ -169,11 +169,11 @@ def auto_maintain():
            "owncode=&stockname=&isincode=&market=4&"
            "issuetype=R&industry_code=&Page=1&chklike=Y")
     _do_work(url, "興櫃")
-    sleep(10)
+    sleep(30)
 
     logger.info("---- ALL DONE ----")
 
-    sleep(60 * 60 * 24 * 2)
+    sleep(60 * 60 * 24 * 1)
 
 
 if __name__ == '__main__':
