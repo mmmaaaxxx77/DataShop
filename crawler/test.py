@@ -1,5 +1,5 @@
 import json
-from asyncio import sleep
+from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
@@ -100,6 +100,7 @@ def do_count_stock(stock_id='2317', stock_name="鴻海", stock_type="上市"):
         for ss in sd[8:15]:
             total_count = _count(total_count, ss)
         date_count[date] = total_count
+        sleep(3)
 
     five_dates.reverse()
 
@@ -147,7 +148,7 @@ def auto_maintain():
             stock_id = stock[2]
             logger.info(f"{stock_id} {stock_name}")
             do_count_stock(stock_id, stock_name, type)
-            sleep(5)
+            sleep(10)
 
     # 上市
     logger.info("---上市---")
