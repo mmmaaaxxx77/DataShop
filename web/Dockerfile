@@ -1,7 +1,7 @@
 # VERSION 1 - EDITION 1
 # !/bin/bash
 
-FROM node
+FROM node:8.11
 
 MAINTAINER johnny
 
