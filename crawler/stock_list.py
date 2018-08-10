@@ -250,10 +250,12 @@ def auto_maintain():
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=1&"
            "issuetype=1&industry_code=&Page=1&chklike=Y")
-    try:
-        _do_work(url, "上市")
-    except Exception as e:
-        print(e)
+    while True:
+        try:
+            _do_work(url, "上市")
+            break
+        except Exception as e:
+            print(traceback.format_exc())
 
     sleep(10)
 
@@ -262,10 +264,12 @@ def auto_maintain():
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=2&"
            "issuetype=4&industry_code=&Page=1&chklike=Y")
-    try:
-        _do_work(url, "上櫃")
-    except Exception as e:
-        print(e)
+    while True:
+        try:
+            _do_work(url, "上櫃")
+            break
+        except Exception as e:
+            print(traceback.format_exc())
     sleep(10)
 
     logger.info("---興櫃---")
@@ -273,10 +277,12 @@ def auto_maintain():
     url = ("http://isin.twse.com.tw/isin/class_main.jsp?"
            "owncode=&stockname=&isincode=&market=4&"
            "issuetype=R&industry_code=&Page=1&chklike=Y")
-    try:
-        _do_work_only_03_stock(url, "興櫃")
-    except Exception as e:
-        print(e)
+    while True:
+        try:
+            _do_work_only_03_stock(url, "興櫃")
+            break
+        except Exception as e:
+            print(traceback.format_exc())
     sleep(10)
 
     logger.info("---- ALL DONE ----")
@@ -321,7 +327,7 @@ def test(sid):
                                         stock_update_date=str(update_date))
             _raw_model.save()
 
-    stock_name = "台微體"
+    stock_name = "遠百"
     stock_id = str(sid)
     update_date, data = get_stock_director(stock_id)
     update_date = str(update_date)
@@ -331,14 +337,14 @@ def test(sid):
     ShareHolderRaw.objects(stock_id=stock_id, stock_update_date=update_date).delete()
 
     logger.info(f"開始寫入 {stock_name} {stock_id} 資料")
-    _write_director_to_mongo(stock_name, stock_id, "上櫃", update_date, data)
+    _write_director_to_mongo(stock_name, stock_id, "上市", update_date, data)
 
 
 if __name__ == '__main__':
 
     auto_maintain()
-    #print(get_stock_director(1101))
-    #test(1101)
+    #print(get_stock_director(2642))
+    # test(2903)
 
 
     # print(get_url_stock_total(1264))
