@@ -100,12 +100,14 @@ class ReactTables extends React.Component {
                   {
                     Header: "股票代號",
                     accessor: "stock_id",
-                    sortable: false
+                    sortable: false,
+                    width: 60
                   },
                   {
                     Header: "股票名稱",
                     accessor: "stock_name",
-                    sortable: false
+                    sortable: false,
+                    width: 60
                   },                  
                   {
                     Header: "職稱",
@@ -125,7 +127,15 @@ class ReactTables extends React.Component {
                     Header: "持股比例",
                     accessor: "stock_percentage",
                     sortable: false,
-                    filterable: false
+                    filterable: false,
+                    width: 60
+                  },
+                  {
+                    Header: "更新時間",
+                    accessor: "stock_update_date",
+                    sortable: false,
+                    filterable: false,
+                    width: 60
                   }
                 ]}
                 defaultPageSize={10}
@@ -195,7 +205,8 @@ class ReactTables extends React.Component {
                               position: prop['position'],
                               name: prop['name'],
                               stock_count: prop['stock_count'],
-                              stock_percentage: prop['stock_percentage']
+                              stock_percentage: prop['stock_percentage'],
+                              stock_update_date: prop['stock_update_date']
                             }
                           }),
                           pages: res.data.count,

@@ -23,6 +23,18 @@ class ShareHolder(Document):
     create_date = DateTimeField(default=datetime.datetime.now)
 
 
+class ShareHolderRaw(Document):
+    stock_id = StringField(required=True)
+    stock_name = StringField(required=True)
+    stock_type = StringField(required=True)
+    position = StringField(required=True)
+    name = StringField(required=True)
+    stock_count = LongField(required=True)
+    stock_percentage = StringField(required=True)
+    stock_update_date = StringField(required=True)
+    create_date = DateTimeField(default=datetime.datetime.now)
+
+
 class CollectorCount(Document):
     stock_id = StringField(required=True)
     stock_name = StringField(required=True)

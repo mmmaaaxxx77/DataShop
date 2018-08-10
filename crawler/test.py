@@ -183,4 +183,5 @@ if __name__ == '__main__':
     # print(get_dates())
     # print(get_stock_data())
     #do_count_stock('2883')
-    auto_maintain()
+    #auto_maintain()
+    do_count_stock("4950", "牧東", "上櫃")

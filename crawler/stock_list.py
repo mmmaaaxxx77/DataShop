@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from mongoengine import connect
 
-from mongo.model import Stock, ShareHolder
+from mongo.model import Stock, ShareHolder, ShareHolderRaw
 
 from logger import logconf
 
@@ -150,7 +150,6 @@ def write_excel(stock_name, stock_id, path):
 
 
 def auto_maintain():
-
     def _write_director_to_mongo(stock_name, stock_id, type, update_date, data):
 
         for d in data:
@@ -178,6 +177,16 @@ def auto_maintain():
                                  stock_update_date=str(update_date))
             _model.save()
 
+            _raw_model = ShareHolderRaw(stock_id=stock_id,
+                                        stock_name=stock_name,
+                                        stock_type=type,
+                                        position=d[0],
+                                        name=d[1],
+                                        stock_count=d[2],
+                                        stock_percentage=d[3] if '%' in d[3] else f'{d[3]}%',
+                                        stock_update_date=str(update_date))
+            _raw_model.save()
+
     def _do_work(url, type):
 
         # get stock list
@@ -196,9 +205,11 @@ def auto_maintain():
             stock = stock_list[index]
             stock_name, stock_id = stock[3], stock[2]
             update_date, data = get_stock_director(stock_id)
+            update_date = str(update_date)
 
             logger.info(f"清除所有 {stock_name} {stock_id} 資料")
             ShareHolder.objects(stock_id=stock_id).delete()
+            ShareHolderRaw.objects(stock_id=stock_id, stock_update_date=update_date).delete()
 
             logger.info(f"開始寫入 {stock_name} {stock_id} 資料")
             _write_director_to_mongo(stock_name, stock_id, type, update_date, data)
@@ -223,15 +234,16 @@ def auto_maintain():
             stock = stock_list[index]
             stock_name, stock_id = stock[3], stock[2]
             update_date, data = get_stock_director03(stock_id)
+            update_date = str(update_date)
 
             logger.info(f"清除所有 {stock_name} {stock_id} 資料")
             ShareHolder.objects(stock_id=stock_id).delete()
+            ShareHolderRaw.objects(stock_id=stock_id, stock_update_date=update_date).delete()
 
             logger.info(f"開始寫入 {stock_name} {stock_id} 資料")
             _write_director_to_mongo(stock_name, stock_id, type, update_date, data)
 
             sleep(10)
-
 
     # 上市
     logger.info("---上市---")
@@ -241,7 +253,7 @@ def auto_maintain():
     try:
         _do_work(url, "上市")
     except Exception as e:
-        logger.error(traceback.print_stack())
+        print(e)
 
     sleep(10)
 
@@ -253,7 +265,7 @@ def auto_maintain():
     try:
         _do_work(url, "上櫃")
     except Exception as e:
-        logger.error(traceback.print_stack())
+        print(e)
     sleep(10)
 
     logger.info("---興櫃---")
@@ -264,7 +276,7 @@ def auto_maintain():
     try:
         _do_work_only_03_stock(url, "興櫃")
     except Exception as e:
-        logger.error(traceback.print_stack())
+        print(e)
     sleep(10)
 
     logger.info("---- ALL DONE ----")
@@ -272,17 +284,69 @@ def auto_maintain():
     sleep(60 * 60 * 24 * 2)
 
 
+def test(sid):
+    def _write_director_to_mongo(stock_name, stock_id, type, update_date, data):
+        for d in data:
+            _data = {
+                'type': type,
+                'stock_id': stock_id,
+                'stock_name': stock_name,
+                'stock_update_date': update_date,
+                'stock_type': type,
+                'create_date': datetime.datetime.now(),
+                'shareholder_position': d[0],
+                'shareholder_name': d[1],
+                'shareholder_stock_count': d[2],
+                'shareholder_stock_percentage': d[3],
+            }
+            logger.info(_data)
+            # write to mongo
+            _model = ShareHolder(stock_id=stock_id,
+                                 stock_name=stock_name,
+                                 stock_type=type,
+                                 position=d[0],
+                                 name=d[1],
+                                 stock_count=d[2],
+                                 stock_percentage=d[3] if '%' in d[3] else f'{d[3]}%',
+                                 stock_update_date=str(update_date))
+            _model.save()
+
+            _raw_model = ShareHolderRaw(stock_id=stock_id,
+                                        stock_name=stock_name,
+                                        stock_type=type,
+                                        position=d[0],
+                                        name=d[1],
+                                        stock_count=d[2],
+                                        stock_percentage=d[3] if '%' in d[3] else f'{d[3]}%',
+                                        stock_update_date=str(update_date))
+            _raw_model.save()
+
+    stock_name = "台微體"
+    stock_id = str(sid)
+    update_date, data = get_stock_director(stock_id)
+    update_date = str(update_date)
+
+    logger.info(f"清除所有 {stock_name} {stock_id} 資料")
+    ShareHolder.objects(stock_id=stock_id).delete()
+    ShareHolderRaw.objects(stock_id=stock_id, stock_update_date=update_date).delete()
+
+    logger.info(f"開始寫入 {stock_name} {stock_id} 資料")
+    _write_director_to_mongo(stock_name, stock_id, "上櫃", update_date, data)
+
+
 if __name__ == '__main__':
 
     auto_maintain()
-    #print(get_stock_director03(1240))
+    #print(get_stock_director(1101))
+    #test(1101)
+
 
     # print(get_url_stock_total(1264))
     # print(get_url_stock_total(1258))
 
     # print(get_stock_result(1108))
 
-    #write_excel("潤泰全", 2915, "上市")
+    # write_excel("潤泰全", 2915, "上市")
 
 
     # print(get_stock_director(1108))
