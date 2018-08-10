@@ -1,8 +1,8 @@
 from mongoengine import *
 import datetime
 
-#connect('stock', host='datashop-mongo')
-connect('stock', host='www.johnnyplanet.com', port=22007)
+connect('stock', host='datashop-mongo')
+#connect('stock', host='www.johnnyplanet.com', port=22007)
 
 
 class Stock(Document):
