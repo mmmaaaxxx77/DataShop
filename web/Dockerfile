@@ -10,5 +10,6 @@ ENV LC_ALL C.UTF-8
 
 ADD . /home/node
 WORKDIR /home/node
+RUN npm install -g npm@latest
 RUN npm install
 EXPOSE 3000
