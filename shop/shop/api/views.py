@@ -144,6 +144,7 @@ class StockShareHolder(APIView):
 
         stock_count_sort = str(self.request.query_params.get('stock_count_sort', None))
         stock_type = str(self.request.query_params.get('stock_type', None))
+        stock_update_date = str(self.request.query_params.get('stock_update_date', None))
 
         _filter = {}
 
@@ -159,6 +160,8 @@ class StockShareHolder(APIView):
             _filter['name__contains'] = name
         if stock_type != 'None':
             _filter['stock_type__contains'] = stock_type
+        if stock_update_date != 'None':
+            _filter['stock_update_date__contains'] = stock_update_date
 
         all = ShareHolder.objects(**_filter)
 
