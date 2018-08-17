@@ -11,7 +11,7 @@ from logger import logconf
 
 logger = logconf.Logger(__name__)
 
-
+# https://www.tdcc.com.tw/smWeb/QryStock.jsp
 def get_url_stock_list(url, type="get", pdata={}):
     if type == 'get':
         ret = requests.get(url)
@@ -30,23 +30,32 @@ def get_url_stock_list(url, type="get", pdata={}):
 
 
 def get_dates(num=5):
-    url = "http://www.tdcc.com.tw/smWeb/QryStockAjax.do"
+
+    # furl = "https://www.tdcc.com.tw/smWeb/QryStock.jsp"
+    # r = requests.get(furl)
+    #
+    # jar = requests.cookies.RequestsCookieJar()
+    # jar.set('JSESSIONID', '0000lj_QfT7qToibmuoUVuLBBdD:19tmdfpi3', domain='www.tdcc.com.tw', path='/')
+
+    url = "https://www.tdcc.com.tw/smWeb/QryStockAjax.do"
     pdata = {
         'REQ_OPR': "qrySelScaDates",
     }
-    ret = requests.post(url, data=pdata)
+    ret = requests.post(url, data=pdata, verify=False)
 
     if "timed out" in ret.text:
         sleep(30)
         return get_dates()
+
+    #print("123: " + ret.text)
 
     result = json.loads(ret.text)[:num]
     result.reverse()
     return result
 
 
-def get_stock_data(stock_id=1240, date=20180720, from_n=0):
-    url = "http://www.tdcc.com.tw/smWeb/QryStockAjax.do"
+def get_stock_data(stock_id=1240, date=20180810, from_n=0):
+    url = "https://www.tdcc.com.tw/smWeb/QryStockAjax.do"
     pdata = {
         'scaDates': date,
         'scaDate': date,
@@ -57,7 +66,7 @@ def get_stock_data(stock_id=1240, date=20180720, from_n=0):
         'REQ_OPR': 'SELECT',
     }
 
-    ret = requests.post(url, data=pdata)
+    ret = requests.post(url, data=pdata, verify=False)
 
     if "timed out" in ret.text:
         sleep(30)
@@ -180,8 +189,8 @@ def auto_maintain():
 
 
 if __name__ == '__main__':
-    # print(get_dates())
-    # print(get_stock_data())
+    print(get_dates())
+    #print(get_stock_data())
     #do_count_stock('2883')
     #auto_maintain()
-    do_count_stock("4950", "牧東", "上櫃")
+    #do_count_stock("4950", "牧東", "上櫃")
